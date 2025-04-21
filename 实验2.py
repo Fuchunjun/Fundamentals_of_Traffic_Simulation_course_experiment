@@ -1,31 +1,37 @@
 import numpy as np
 import matplotlib.pyplot as plt
+
+# 设置中文字体显示
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定中文字体为黑体
 plt.rcParams['axes.unicode_minus'] = False     # 解决符号显示问题
+
 # GHR跟驰模型参数
 c = 0.5  # 灵敏度参数
-m = 1  # 速度指数
-l = 1  # 间距指数
+m = 1    # 速度指数
+l = 1    # 间距指数
 
 # 随机生成初始参数
-np.random.seed()
-initial_distance = round(np.random.uniform(10, 50), 2) # 初始间距(米)
-front_initial_speed = round(np.random.uniform(10, 20),2)  # 前车初始速度(米/秒)
-rear_initial_speed = round(np.random.uniform(10, 20), 2)  # 后车初始速度(米/秒)
-front_acceleration = round(np.random.uniform(0.5, 2),2)  # 前车加速度(米/秒²)
-reaction_time = round(np.random.uniform(0.5, 2),2 )  # 后车反应时间(秒)
+seed = 42  # 固定随机种子以确保结果可复现
+np.random.seed(seed)
+
+# 车辆初始状态参数
+initial_distance = round(np.random.uniform(10, 50), 2)    # 初始间距(米)
+front_initial_speed = round(np.random.uniform(10, 20), 2)  # 前车初始速度(米/秒)
+rear_initial_speed = round(np.random.uniform(10, 20), 2)   # 后车初始速度(米/秒)
+front_acceleration = round(np.random.uniform(0.5, 2), 2)   # 前车加速度(米/秒²)
+reaction_time = round(np.random.uniform(0.5, 2), 2)        # 后车反应时间(秒)
 
 # 仿真参数
 simulation_time = 10  # 总仿真时间(秒)
-dt = 0.01  # 时间步长(秒)
+dt = 0.01             # 时间步长(秒)
 steps = int(simulation_time / dt)
 
-# 初始化数组
-front_position = []
-rear_position = []
-front_speed = []
-rear_speed = []
-rear_acceleration = []
+# 初始化数组 - 存储仿真结果
+front_position = []     # 前车位置数组
+rear_position = []      # 后车位置数组
+front_speed = []        # 前车速度数组
+rear_speed = []         # 后车速度数组
+rear_acceleration = []  # 后车加速度数组
 
 # 设置初始条件
 front_position.append(0)
@@ -93,7 +99,7 @@ plt.yticks(fontsize=10)
 # 添加参数文本框
 param_text = f'初始参数:\n前车速度: {front_initial_speed:.2f} m/s\n后车速度: {rear_initial_speed:.2f} m/s\n初始间距: {initial_distance:.2f} m\n前车加速度: {front_acceleration:.2f} m/s^2\n反应时间: {reaction_time:.2f} s'
 plt.text(0.02, 0.98, param_text, transform=plt.gca().transAxes,
-         verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5), fontsize=10)
+         verticalalignment='top', bbox=dict(boxstyle='round', alpha=0), fontsize=10)
 
 # 速度图
 plt.subplot(3, 1, 2)
@@ -108,7 +114,7 @@ plt.yticks(fontsize=10)
 # 添加模型参数文本框
 model_text = f'GHR模型参数:\n灵敏度: {c}\n速度指数: {m}\n间距指数: {l}'
 plt.text(0.02, 0.98, model_text, transform=plt.gca().transAxes,
-         verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5), fontsize=10)
+         verticalalignment='top', bbox=dict(boxstyle='round', alpha=0), fontsize=10)
 
 # 加速度图
 plt.subplot(3, 1, 3)
@@ -121,12 +127,12 @@ plt.xticks(fontsize=10)
 plt.yticks(fontsize=10)
 
 plt.tight_layout()
-plt.savefig('out/2/car_following_simulation.png', dpi=500 , bbox_inches='tight')
+plt.savefig(f'out/2/car_following_simulation_{seed}.png', dpi=500 , bbox_inches='tight')
 plt.show()
 
 # 保存仿真结果到CSV文件
 import csv
-with open("out/2/simulation_results.csv", mode="w", newline="", encoding="utf-8") as file:
+with open(f"out/2/simulation_results_{seed}.csv", mode="w", newline="", encoding="utf-8") as file:
     writer = csv.writer(file)
     writer.writerow(["时间 (秒)", "前车位置 (米)", "后车位置 (米)", "前车速度 (米/秒)", "后车速度 (米/秒)", "后车加速度 (米/秒²)","两车间距"])
     for i in range(len(front_position)):
